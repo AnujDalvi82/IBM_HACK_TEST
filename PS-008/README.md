@@ -1,30 +1,39 @@
 # PS-008: Asymmetric Continual Federated Learning Under Severe Non-IID Drift & Byzantine Poisoning
 
-## 📌 Scenario & Technical Challenge
-A consortium of international banks needs to collaboratively identify evolving cross-border fraud syndicates without centralizing or sharing private financial transactions. Teams must build an asynchronous federated learning system that trains on distributed non-IID data across institutional nodes while actively defending against model poisoning and adversarial drift.
-
-## 🚨 Production / Industry Bottleneck
-Standard federated averaging (FedAvg) diverges when client data distributions are highly non-IID, causing catastrophic forgetting of historical fraud vectors when new fraud variants appear. Furthermore, distributed learning systems are highly vulnerable to sybil attacks, where compromised nodes submit poisoned gradients to degrade the global model.
-
-## 💡 Desired Solution & Technical Hints
-Implement dynamic orthogonal gradient projection: project incoming local model updates onto a subspace orthogonal to the gradient subspace of prior tasks to prevent catastrophic forgetting. Pair this with a Byzantine-resilient aggregation rule (e.g., geometric median, coordinate-wise trimmed mean, or Krum) and a differential privacy noise allocation mechanism to neutralize malicious updates.
-
-## 🛠️ Mandatory Languages
-Python (PyTorch, Flower/Syft for federated coordination), Rust (Cryptographic secure aggregation and differential privacy noise engine).
-
-## 🎯 Production Criteria
-Maintain > 90% classification accuracy on legacy fraud vectors after continuous updates, with zero model divergence under simulated scenarios where up to 30% of edge nodes submit adversarial poisoning gradients.
+> **Track Domain:** Federated Learning / Continual Learning / Financial Security
 
 ---
 
-## 📦 Dataset Package
-The dataset package is provided as a zip file:
-- **`PS-008.zip`**
+## 📌 Scenario & Technical Challenge
+A consortium of international financial institutions wants to collaboratively train an AI model to detect emerging cross-border fraud rings without sharing private customer transaction records. Teams must construct an asynchronous federated learning system that trains across decentralized banking nodes despite severe data distribution differences (non-IID data) and active adversarial attacks.
 
-### What's Inside:
-Contains `clients/client_bank_01.csv` to `client_bank_10.csv` (10 non-IID bank datasets with drift and Byzantine poisoning flags).
+## 🚨 Production / Industry Bottleneck
+Standard Federated Averaging (FedAvg) fails when client data distributions vary widely, causing global models to suffer from catastrophic forgetting of older fraud patterns when adapting to new variants. Additionally, distributed networks are vulnerable to Byzantine attacks, where malicious or compromised nodes submit poisoned gradient updates to corrupt the shared model.
+
+## 💡 Desired Solution & Technical Hints
+Implement dynamic orthogonal gradient projection: project local model updates onto a subspace orthogonal to gradients of previously learned fraud patterns to prevent catastrophic forgetting. Combine this with robust aggregation algorithms (such as geometric median, coordinate-wise trimmed mean, or Krum) and differential privacy noise allocation to identify and neutralize malicious client updates.
+
+## 🛠️ Mandatory Languages
+Python (PyTorch, Flower/Syft for federated coordination), Rust (Cryptographic secure aggregation and differential privacy engine).
+
+## 🎯 Production Criteria
+Maintain **> 90% classification accuracy** on historical fraud vectors after continuous updates, with zero model divergence when **up to 30%** of participating client nodes submit adversarial poisoning gradients.
+
+---
+
+## 📦 Dataset Package & Ingestion Policy
+
+### Provided in `PS-008.zip`:
+- `clients/`: 10 decentralized institutional banking node CSV datasets (`client_bank_01.csv` to `client_bank_10.csv`) with 10 PCA transaction features per record, simulating non-IID class imbalance, temporal concept drift, and adversarial Byzantine inverted labels.
+- `DATASET_INFO.md`: Client partitioning specifications and attack flags.
+
+### 🌐 External Data & Ingestion Liberty:
+Participants have complete liberty to ingest and partition large-scale public financial fraud datasets such as the **Kaggle Credit Card Fraud Detection dataset**, **IEEE-CIS Fraud Detection**, or the **Elliptic Bitcoin Transaction Graph**.
+
+---
 
 ### How to Extract:
 ```bash
+# Navigate to this folder and extract the dataset
 unzip PS-008.zip -d dataset/
 ```

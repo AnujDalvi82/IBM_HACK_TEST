@@ -1,30 +1,40 @@
 # PS-005: Dynamic Inverted-HNSW Vector Storage Engine with High-Throughput Write Ingestion
 
-## 📌 Scenario & Technical Challenge
-Financial intelligence platforms ingest real-time tick news, filing updates, and earnings transcripts that must be immediately searchable across billions of dense vectors without downtime or query degradation. Teams must build a dedicated hybrid vector storage engine from the ground up, capable of handling extreme write workloads while serving low-latency nearest-neighbor queries.
-
-## 🚨 Production / Industry Bottleneck
-Modern vector databases (e.g., Pinecone, Milvus, Qdrant) suffer from write amplification and query latency spikes during large ingestion bursts. Rebuilding or updating HNSW graph layers locks indices, forcing engineers to trade real-time data freshness for stable search latencies.
-
-## 💡 Desired Solution & Technical Hints
-Implement a Log-Structured Merge (LSM) architecture for vector data. Ingest incoming vectors into a lock-free, in-memory buffer (MemTable) backed by an append-only Write-Ahead Log (WAL). When the buffer saturates, flush it to disk as immutable, quantized vector segments. Queries should execute a concurrent fan-out across both the active MemTable and immutable disk segments, dynamically merging k-NN results.
-
-## 🛠️ Mandatory Languages
-Rust or C++ (Storage engine, LSM trees, SIMD-accelerated distance metrics), Go (gRPC query router), TypeScript (Real-time telemetry frontend).
-
-## 🎯 Production Criteria
-Sustain a continuous write rate of > 50,000 vectors/sec while maintaining a concurrent query throughput of 2,000 queries/sec with P99 search latency strictly under 15ms.
+> **Track Domain:** Database Storage Engines / Vector Indexing / Systems
 
 ---
 
-## 📦 Dataset Package
-The dataset package is provided as a zip file:
-- **`PS-005.zip`**
+## 📌 Scenario & Technical Challenge
+Financial intelligence and real-time analytics platforms ingest massive streams of live news, filings, and market transcripts. These documents must be embedded and immediately searchable across billions of dense vectors without service downtime. Teams must build a dedicated hybrid vector storage engine capable of ingesting high-throughput streaming writes while concurrently serving low-latency nearest-neighbor search queries.
 
-### What's Inside:
-Contains `vectors_1k_64d.bin` (dense float32 vectors) and `queries_ground_truth_knn.json` (exact top-10 ground-truth nearest neighbors).
+## 🚨 Production / Industry Bottleneck
+Popular vector databases (e.g., Pinecone, Milvus, Qdrant) suffer from write bottlenecks and query latency spikes during large data bursts. Updating or rebalancing Hierarchical Navigable Small World (HNSW) graph layers locks index structures, forcing engineers to trade real-time search freshness for predictable query performance.
+
+## 💡 Desired Solution & Technical Hints
+Apply a Log-Structured Merge (LSM) architecture to vector data. Write incoming vectors into an in-memory, lock-free buffer (MemTable) backed by an append-only Write-Ahead Log (WAL). When the buffer fills, flush it to disk as an immutable, quantized vector segment. Process search queries concurrently across both active memory buffers and immutable disk segments, dynamically merging top-k results.
+
+## 🛠️ Mandatory Languages
+Rust or C++ (Storage engine, LSM trees, SIMD-accelerated distance metrics), Go (gRPC query router), TypeScript (Telemetry and monitoring interface).
+
+## 🎯 Production Criteria
+Sustain a continuous write ingestion rate of **> 50,000 vectors/second** while concurrently answering **2,000 queries/second**, maintaining a P99 search latency strictly **under 15 milliseconds**.
+
+---
+
+## 📦 Dataset Package & Ingestion Policy
+
+### Provided in `PS-005.zip`:
+- `vectors_1k_64d.bin`: Normalized dense float32 vectors in raw binary format for write ingestion benchmarking.
+- `queries_ground_truth_knn.json`: Exact top-10 brute-force nearest-neighbor ground truth for 50 query vectors.
+- `DATASET_INFO.md`: Vector format and benchmarking specifications.
+
+### 🌐 External Data & Ingestion Liberty:
+Participants have complete liberty to ingest standard large-scale vector search benchmarks such as **SIFT1M / SIFT10M**, **GIST1M**, **Deep1B**, or dense text embeddings from **Cohere / OpenAI Wikipedia dumps**.
+
+---
 
 ### How to Extract:
 ```bash
+# Navigate to this folder and extract the dataset
 unzip PS-005.zip -d dataset/
 ```
